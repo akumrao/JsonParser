@@ -1,0 +1,47 @@
+import os ;
+
+
+if [ os.name ] = NT
+{
+        BUILD_ARCH = win32 ;
+        TARGET_REQUIREMENTS = <define>WIN32 
+                             <define>_WIN32_WINNT=0x0501
+                             <define>WINVER=0x0501 ;
+}
+
+if [ os.name ] = LINUX
+{
+        BUILD_ARCH = linux86 ;
+        TARGET_REQUIREMENTS = <define>OMD_LITTLE_ENDIAN
+                               ;
+}
+
+
+project /omd/json
+        : source-location ../omd
+	  : requirements $(TARGET_REQUIREMENTS)
+          <define>BOOST_ALL_NO_LIB=1
+	  <define>BOOST_ALL_DYN_LINK=1
+	  <define>BOOST_SERIALIZATION_DYN_LINK=1
+	  <toolset>gcc:<cxxflags>-ftemplate-depth-300
+        : usage-requirements <include>.. 
+                 <os>NT:<include>../../common/omd/arch/win32
+	  	 <os>LINUX:<include>../../common/omd/arch/linux86
+        : default-build <threading>multi
+        : build-dir ../lib
+        ;
+
+
+CPP_SOURCES =  JSONReader var JSONWriter json_util ;
+
+
+lib omdjson
+	: $(CPP_SOURCES).cpp
+	  /omd/common//omdcommon
+	  /vendor/boost//headers
+        : <include>..
+		  <include>../omd/detail
+          <link>shared
+	:
+        ;
+

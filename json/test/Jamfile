@@ -1,0 +1,37 @@
+import os ;
+import testing ;
+
+
+if [ os.name ] = NT
+{
+	BUILD_ARCH = win32 ;
+	TARGET_REQUIREMENTS = <define>WIN32 ;
+}
+
+
+
+project /omd/library/json/test
+        : requirements $(TARGET_REQUIREMENTS)
+          <define>BOOST_ALL_NO_LIB=1
+	  <define>OMD_LITTLE_ENDIAN
+#	  <include>..
+#	  <include>../omd
+	  <source>/omd/json//omdjson
+	  <source>/vendor/boost//headers
+        : default-build <threading>multi
+        : build-dir bin
+        ;
+
+
+{
+	test-suite json_testing :
+
+	#[ run xml_node_test.cpp : : :  : ]
+        [ run test4.cpp : : jason4.txt  : : ]
+        [ run test3.cpp : : jason2.txt  :  : ]
+	[ run test2.cpp : : jason1.txt  :  : ]
+	[ run test1.cpp : : jason1.txt  :  : ]
+
+	;
+}
+
